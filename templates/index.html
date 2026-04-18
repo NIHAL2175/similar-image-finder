@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Similar Image Finder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Similar Image Finder</h1>
+            <p>Upload an image and find visually similar images in your dataset using advanced AI matching technology</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="image-form">
+            <div class="upload-section">
+                <div class="form-group">
+                    <label for="query-upload">Upload Query Image</label>
+                    <div class="file-upload">
+                        <div class="file-upload-icon">📷</div>
+                        <div class="file-upload-text">Drop your query image here or click to browse</div>
+                        <div class="file-upload-subtext">Supported formats: JPG, PNG, GIF (Max: 5MB)</div>
+                        <input type="file" id="query-upload" name="query" required>
+                    </div>
+                    <div id="query-upload-status" class="upload-status"></div>
+                </div>
+
+                <div class="form-group" id="dataset-upload-container">
+                    <label for="dataset-upload">Upload Dataset Images</label>
+                    <div class="file-upload">
+                        <div class="file-upload-icon">🖼️</div>
+                        <div class="file-upload-text">Drop multiple images here or click to browse</div>
+                        <div class="file-upload-subtext">Select multiple files to create your dataset (Max: 50MB total)</div>
+                        <input type="file" id="dataset-upload" name="dataset" multiple required>
+                    </div>
+                    <div id="dataset-status" class="upload-status"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">Find Similar Images</button>
+            </div>
+        </form>
+
+        {% if query_image %}
+        <div class="results-section">
+            <h2 class="section-title">Query Image</h2>
+            <div class="query-image-container">
+                <img class="query-image" src="{{ url_for('static', filename='uploads/query/' + query_image) }}" alt="Query Image">
+            </div>
+
+            <h2 class="section-title">Top 5 Similar Images</h2>
+            <div class="image-grid">
+                {% for img in similar_images %}
+                <div class="similar-image-card">
+                    <img class="similar-image" src="{{ url_for('static', filename='uploads/dataset/' + img) }}" alt="{{ img }}">
+
+                    <div class="image-caption">{{ img }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Upload confirmation dialog -->
+    <div id="upload-dialog" class="dialog">
+        <div class="dialog-content">
+            <span class="close-dialog">&times;</span>
+            <p id="dialog-message"></p>
+            <button id="dialog-ok" class="dialog-btn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Store dataset upload state
+        let datasetUploaded = false;
+        let datasetFiles = [];
+
+        // Query image upload handler
+        document.getElementById('query-upload').addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                showDialog(`Image "${fileName}" uploaded successfully!`);
+                document.getElementById('query-upload-status').textContent = `Selected: ${fileName}`;
+            }
+        });
+
+        // Dataset upload handler
+        document.getElementById('dataset-upload').addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                datasetUploaded = true;
+                datasetFiles = this.files;
+
+                const fileCount = this.files.length;
+                document.getElementById('dataset-status').textContent = `Selected: ${fileCount} image${fileCount !== 1 ? 's' : ''}`;
+
+                // Store dataset files in localStorage (just the fact that they're uploaded, not the actual files)
+                localStorage.setItem('datasetUploaded', 'true');
+            }
+        });
+
+        // Form submission handler
+        document.getElementById('image-form').addEventListener('submit', function(e) {
+            // If dataset is already uploaded and stored, we don't need to include it again
+            if (datasetUploaded) {
+                // We'll let the form submit normally
+            }
+        });
+
+        // Dialog functions
+        function showDialog(message) {
+            document.getElementById('dialog-message').textContent = message;
+            document.getElementById('upload-dialog').style.display = 'block';
+        }
+
+        // Close dialog when clicking the X
+        document.querySelector('.close-dialog').addEventListener('click', function() {
+            document.getElementById('upload-dialog').style.display = 'none';
+        });
+
+        // Close dialog when clicking the OK button
+        document.getElementById('dialog-ok').addEventListener('click', function() {
+            document.getElementById('upload-dialog').style.display = 'none';
+        });
+
+        // Check if dataset was previously uploaded
+        window.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('datasetUploaded') === 'true') {
+                document.getElementById('dataset-status').textContent = 'Dataset previously uploaded';
+                document.getElementById('dataset-upload').removeAttribute('required');
+                datasetUploaded = true;
+            }
+        });
+    </script>
+</body>
+</html>
