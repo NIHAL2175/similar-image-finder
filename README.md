@@ -31,7 +31,6 @@ Find visually similar images using advanced deep learning algorithms and compute
 
 - Installation
 - Usage
-- Project Structure
 - API Reference
 - Configuration
 - Contributing
@@ -79,25 +78,6 @@ Advanced Features:
 - Drag & Drop upload
 - Image previews
 - Export results
-
-------------------------------------------------------------
-
-🏗️ Project Structure
-
-similar-image-finder/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-│
-├── static/
-│   ├── style.css
-│   └── uploads/
-│       ├── query/
-│       └── dataset/
-│
-└── templates/
-    └── index.html
 
 ------------------------------------------------------------
 
@@ -151,12 +131,6 @@ Code Style:
 
 ------------------------------------------------------------
 
-📝 License
-
-MIT License
-
-------------------------------------------------------------
-
 🙏 Acknowledgments
 
 - Flask
@@ -165,20 +139,6 @@ MIT License
 - OpenCV
 - NumPy
 - Pillow
-
-------------------------------------------------------------
-
-⚠️ Troubleshooting
-
-1. Model Download Issue:
-python -c "import tensorflow as tf; tf.keras.applications.MobileNetV2(weights='imagenet')"
-
-2. Memory Issues:
-- Reduce batch size
-- Use GPU if available
-
-3. Upload Size Issues:
-- Increase MAX_CONTENT_LENGTH
 
 ------------------------------------------------------------
 
@@ -210,5 +170,11 @@ Recommended:
 - CPU: 4+ cores
 - RAM: 8GB+
 - GPU (optional)
+
+------------------------------------------------------------
+
+📝 License
+
+MIT License
 
 ------------------------------------------------------------
